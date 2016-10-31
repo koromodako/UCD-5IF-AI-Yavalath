@@ -14,6 +14,7 @@
 #  FUNCTIONS/CLASSES
 #==============================================================================
 class Board(object):
+    """Board"""
     # players IDs
     PR_1=1
     PR_2=2
@@ -24,12 +25,13 @@ class Board(object):
     EG_WIN=1
     EG_LOSE=2
     EG_NEXT=3
-    """Board"""
     def __init__(self):
+        """__init__"""
         super(Board, self).__init__()
         self.reset()
 
     def reset(self):
+        """reset"""
         self.board = [
             -1,-1,-1,-1, 0, 0, 0, 0, 0,
             -1,-1,-1, 0, 0, 0, 0, 0, 0,
@@ -47,16 +49,20 @@ class Board(object):
         self.latest_mv = None
 
     def next_player(self):
+        """next_player"""
         return self.nxt_pl
 
     def move_count(self):
+        """move_count"""
         return self.mv_count
 
     def take_first_move(self):
+        """take_first_move"""
         self.fst_mv_taken = True
         return self.latest_mv
 
     def print_line(self, ridx, indent):
+        """print_line"""
         print(' '*indent, end='')
         for i in range(0,self.SIDE):
             v=self.board[ridx*self.SIDE+i]
@@ -70,6 +76,7 @@ class Board(object):
         print('|')
 
     def print(self):
+        """print"""
         print('         / \\ / \\ / \\ / \\ / \\')
         self.print_line(0, 8) 
         print('       / \\ / \\ / \\ / \\ / \\ / \\')
@@ -91,6 +98,7 @@ class Board(object):
         print('         \\ / \\ / \\ / \\ / \\ /')
 
     def is_playable(self, r, c):
+        """is_playable"""
         valid = False
         y = c
         for k in range(0,9):
@@ -105,15 +113,58 @@ class Board(object):
         return (valid, r, y)
 
     def do(self, x, y):
+        """do"""
         self.board[x*self.SIDE+y] = self.nxt_pl
         self.nxt_pl = (self.PR_1 if self.nxt_pl == self.PR_2 else self.PR_2)
         self.mv_count += 1
         self.latest_mv = (x,y)
 
-    def undo(self):
-        pass
+    def ai_do(self, x, y, pl):
+        """ai_do"""
+        self.board[x*self.SIDE+y] = pl 
+
+    def ai_undo(self, x, y):
+        """ai_undo"""
+        self.board[x*self.SIDE+y] = 0
+
+    def ai_board_lines(self, pl):
+        board_lines = [ '' for i in range(0,3*self.SIDE) ]
+        # fill lines and columns
+        for x in range(0,9):
+            for y in range(0,9):
+                v = self.board[x*self.SIDE+y]
+                if v != -1:
+                    if v == pl:
+                        board_lines[x] += '1'
+                        board_lines[self.SIDE+y] += '1'
+                    else:
+                        board_lines[x] += '0'
+                        board_lines[self.SIDE+y] += '0'
+        # fill diagonals
+        for c in range(4,9):
+            for r in range(0,9):
+                y = c - r
+                if y >= 9 or y < 0: 
+                    break
+                if self.board[r*self.SIDE+y] == pl:
+                    board_lines[2*self.SIDE+c-4] += '1'
+                else:
+                    board_lines[2*self.SIDE+c-4] += '0'
+        for r in range(1,5):
+            for c in range(0,9):
+                x = r + c
+                y = self.SIDE-1-c
+                if x >= 9 or x < 0 or y >= 9 or y < 0:
+                    break 
+                if self.board[x*self.SIDE+y] == pl:
+                    board_lines[3*self.SIDE-r] += '1'
+                else:
+                    board_lines[3*self.SIDE-r] += '0'
+        # return lines
+        return board_lines
 
     def end_game(self):
+        """end_game"""
         # -- initialise variables
         (x,y) = self.latest_mv
         pl = self.board[x*self.SIDE+y]
