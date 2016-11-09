@@ -4,7 +4,8 @@
 # date:    2016-10-30
 # author:  paul dautry (16201434)
 # purpose:
-#
+#   This file contains the implementation of the Yavalath class which 
+#   contains Yavalath's game logic and game's main loop. 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #==============================================================================
 #  IMPORTS
@@ -17,13 +18,15 @@ from ai     import AI
 #==============================================================================
 class Yavalath(object):
     """Yavalath"""
-    def __init__(self, p1=AI(), p2=Player("HUMAN")):
+    def __init__(self, p1=Player("Paul"), p2=Player("Salomé")):
+        """Constructs Yavalath object"""
         super(Yavalath, self).__init__()
         self.board = Board()
         self.p1 = p1
         self.p2 = p2
 
     def run(self):
+        """Starts game's main loop"""
         # -- reset game board
         self.board.reset()
         # -- loop while game is not over

@@ -17,17 +17,26 @@ from board  import Board
 class Player(object):
     """Player"""
     def __init__(self, pseudo):
+        """Constructs the Player object"""
         super(Player, self).__init__()
         self.pseudo = pseudo
 
     def name(self):
+        """Returns player name as a string"""
         return self.pseudo
 
     def next_move(self, board):
+        """Computes player next move based on the input
+           arguments:
+               board -- Board object
+        """
         valid = False
         x = y = None
         while not valid:
             mv = input('Enter your move: ')
+            if len(mv) == 1 and mv == 'Q':
+                print('See you soon !')
+                exit(1)
             if board.move_count() == 1:
                 if len(mv) == 1 and mv == 'X':
                     (x,y) = board.take_first_move()
@@ -40,4 +49,4 @@ class Player(object):
             if not valid:
                 print('[!] Invalid input. Try again.')
         return (x, y)
-        
+
