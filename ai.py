@@ -81,24 +81,31 @@ class AI(object):
             # -- debug
             #print(moves)
             # -- debug
+            m_i = None
             for mv in moves:
                 if board.ai_is_playable(mv[0], mv[1]):
                     # -- debug
                     #print('%sconsidering(%d,%d)' % (h*'\t', i, j))
                     # -- debug
                     board.ai_do(mv[0], mv[1])
-                    (m_i, m_j, rscore) = self.negamax(board,
+                    (ri, rj, rscore) = self.negamax(board,
                         board.next_player(), h-1, -b, -a)
+                    board.ai_undo(mv[0], mv[1])
                     score = - rscore
                     if score >= b:
                         self.move_generator.incr_pruning(mv, h)
-                        board.ai_undo(mv[0], mv[1])
                         return (mv[0], mv[1], score)
                     if score > a:
                         a = score
                         m_i = mv[0]
                         m_j = mv[1]
-                    board.ai_undo(mv[0], mv[1])
+            if m_i is None:
+                m_i = mv[0]
+                m_j = mv[1]
+            # -- debug
+            #print('alpha=%d, beta=%d, score=%d, h=%d' % (a,b,score,h))
+            #board.print()
+            # --debug
             return (m_i, m_j, a)
 
     def static_eval(self, board, player):
