@@ -60,7 +60,7 @@ def benchmark():
                 for se in se2:
                     mse2 += se
             print('[benchmark]> %d;%s;%d;%d;%d' %
-                (it, res, max(lse1,lse2), mse1/lse1, mse2/lse2))
+                (it, res, lse1+lse2, mse1/lse1, mse2/lse2))
 #==============================================================================
 #  MAIN SCRIPT
 #==============================================================================
