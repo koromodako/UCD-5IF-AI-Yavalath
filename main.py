@@ -10,10 +10,11 @@
 #==============================================================================
 #  IMPORTS
 #==============================================================================
-from yavalath import Yavalath
-from player   import Player
-from ai       import AI
-from random   import randint
+from yavalath       import Yavalath
+from player         import Player
+from ai             import AI
+from move_generator import MoveGenerator
+from random         import randint
 #==============================================================================
 #  GLOBALS
 #==============================================================================
@@ -58,18 +59,18 @@ def input_level(ai_name):
 
 def input_mode(ai_name):
     while True:
-        level = input('[i] Enter a mode for %s (AI): ' % ai_name)
-        if len(level) == 1:
-            v = ord(level)-48
+        mode = input('[i] Enter a mode for %s (AI): ' % ai_name)
+        if len(mode) == 1:
+            v = ord(mode)-48
             if v == 1:
                 print('[i] Simple mode selected.')
-                return AI.MODE_SIMPLE
+                return MoveGenerator.MODE_SIMPLE
             elif v == 2:
                 print('[i] Killer mode selected.')
-                return AI.MODE_KILLER
+                return MoveGenerator.MODE_KILLER
             elif v == 3:
                 print('[i] History mode selected.')
-                return AI.MODE_HISTRY
+                return MoveGenerator.MODE_HISTORY
         print('[!] Invalid input. Expect a number in [1,3].')
 
 def get_ai_name():

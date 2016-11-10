@@ -12,6 +12,7 @@
 #  IMPORTS
 #==============================================================================
 import sys
+from move_generator import MoveGenerator
 from board  import Board
 #==============================================================================
 #  GLOBALS
@@ -26,42 +27,40 @@ class AI(object):
     LVL_1 = 3
     LVL_2 = 4
     LVL_3 = 5
-    # ai modes
-    MODE_SIMPLE  = 1
-    MODE_KILLER  = 2
-    MODE_HISTORY = 3
     # static evaluation patterns
     PATTERNS = {
     #   pattern: weight
     # best patterns
         'xxxx' : 50,
-        '0xx0x': 5,
-        'x0xx0': 5,
-        '0x00x': 2,
-        'x00x0': 2,
+        'xx0x' : 5,
+        'x0xx' : 5,
+        '0xx0x': 5, # required by assignment instructions
+        'x0xx0': 5, # required by assignment instructions
+        '0x00x': 2, # required by assignment instructions
+        'x00x0': 2, # required by assignment instructions
     # worst patterns
-        '0xx0' :-1,
-        '0x0x0':-1,
-        'xxx'  :-40
+        '0xx0' :-1, # required by assignment instructions
+        '0x0x0':-1, # required by assignment instructions
+        'xxx'  :-20
     }
 
-    def __init__(self, pseudo, level, mode):
+    def __init__(self, name, level, mode):
         """Constructs the AI object"""
         super(AI, self).__init__()
-        self.pseudo = pseudo
+        self.name = name
         self.level = level
-        self.mode = mode
-
-    def name(self):
-        """Returns the name of the AI player"""
-        return self.pseudo
+        self.move_generator = MoveGenerator(mode)
+        self.static_evals = []
 
     def next_move(self, board):
         """Computes the next move to be played by the AI player
            arguments:
                board -- Board object
         """
-        (i, j, score) = self.negamax(board, board.next_player(), self.level-1, -INFINITY, INFINITY)
+        self.static_evals.append(0)
+        self.move_generator.reset(self.level)
+        (i, j, score) = self.negamax(board,
+            board.next_player(), self.level-1, -INFINITY, INFINITY)
         return (i, j)
 
     def negamax(self, board, player, h, a, b):
@@ -78,24 +77,28 @@ class AI(object):
         if h == 0:
             return (None, None, self.static_eval(board, player))
         else:
-            m_i = m_j = None
-            for i in range(0,9):
-                for j in range(0,9):
-                    if board.ai_is_playable(i,j):
-                        # -- debug
-                        #print('%sconsidering(%d,%d)' % (h*'\t', i, j))
-                        # -- debug
-                        board.ai_do(i,j)
-                        (ri, rj, rscore) = self.negamax(board, board.next_player(), h-1, -b, -a)
-                        score = - rscore
-                        if score >= b:
-                            board.ai_undo(i,j)
-                            return (i, j, score)
-                        if score > a:
-                            a = score
-                            m_i = i
-                            m_j = j
-                        board.ai_undo(i,j)
+            moves = self.move_generator.gen_moves(h)
+            # -- debug
+            #print(moves)
+            # -- debug
+            for mv in moves:
+                if board.ai_is_playable(mv[0], mv[1]):
+                    # -- debug
+                    #print('%sconsidering(%d,%d)' % (h*'\t', i, j))
+                    # -- debug
+                    board.ai_do(mv[0], mv[1])
+                    (m_i, m_j, rscore) = self.negamax(board,
+                        board.next_player(), h-1, -b, -a)
+                    score = - rscore
+                    if score >= b:
+                        self.move_generator.incr_pruning(mv, h)
+                        board.ai_undo(mv[0], mv[1])
+                        return (mv[0], mv[1], score)
+                    if score > a:
+                        a = score
+                        m_i = mv[0]
+                        m_j = mv[1]
+                    board.ai_undo(mv[0], mv[1])
             return (m_i, m_j, a)
 
     def static_eval(self, board, player):
@@ -105,8 +108,9 @@ class AI(object):
                player -- Integer value of the player defined by Board class
         """
         # -- debug
-        #print('static_eval(board, player=%d)' % player) 
+        #print('static_eval(board, player=%d)' % player)
         # -- debug
+        self.static_evals[-1] += 1
         board_lines = board.ai_board_lines()
         score = p1_score = p2_score = 0
         # first player score
@@ -129,3 +133,6 @@ class AI(object):
         # -- debug
         return score
 
+    def reset(self):
+        """Resets internal counters"""
+        self.static_evals = []

@@ -16,14 +16,10 @@ from board  import Board
 #==============================================================================
 class Player(object):
     """Player"""
-    def __init__(self, pseudo):
+    def __init__(self, name):
         """Constructs the Player object"""
         super(Player, self).__init__()
-        self.pseudo = pseudo
-
-    def name(self):
-        """Returns player name as a string"""
-        return self.pseudo
+        self.name = name
 
     def next_move(self, board):
         """Computes player next move based on the input

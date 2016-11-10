@@ -25,6 +25,14 @@ class Board(object):
     EG_WIN=1
     EG_LOSE=2
     EG_NEXT=3
+    # impossible moves
+    IMPOSSIBLE = [
+        (0,0), (0,1), (0,2), (0,3), (1,0), 
+        (1,1), (1,2), (2,0), (2,1), (3,0), 
+        (5,8), (6,7), (6,8), (7,6), (7,8), 
+        (7,8), (8,5), (8,6), (8,7), (8,8)
+    ]
+
     def __init__(self):
         """Constructs the Board object"""
         super(Board, self).__init__()
