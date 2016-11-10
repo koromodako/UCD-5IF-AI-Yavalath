@@ -73,6 +73,16 @@ def input_mode(ai_name):
                 return MoveGenerator.MODE_HISTORY
         print('[!] Invalid input. Expect a number in [1,3].')
 
+def input_p1_first(p1, p2):
+    while True:
+        answer = input('[i] Do you agree with %s playing first ? [y/n]: ' % 
+            p1.name)
+        if 'y' == answer:
+            return True
+        elif 'n' == answer:
+            return False
+        print('[!] Invalid input. Expect "y" or "n".')
+
 def get_ai_name():
     global IDX
     i = -1
@@ -127,5 +137,9 @@ elif mode == 3:
 print("""
 -------------------------------------------------------------------------------
 """)
-y=Yavalath(P1,P2)
+y=None
+if input_p1_first(P1, P2):
+    y=Yavalath(P1,P2)
+else:
+    y=Yavalath(P2,P1)
 y.run()

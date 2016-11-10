@@ -4,8 +4,8 @@
 # date:    2016-10-30
 # author:  paul dautry (16201434)
 # purpose:
-#   This file contains the implementation of Board class which represent a 
-#   Yavalath board with associated game state data. 
+#   This file contains the implementation of Board class which represent a
+#   Yavalath board with associated game state data.
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #==============================================================================
 #  IMPORTS
@@ -27,9 +27,9 @@ class Board(object):
     EG_NEXT=3
     # impossible moves
     IMPOSSIBLE = [
-        (0,0), (0,1), (0,2), (0,3), (1,0), 
-        (1,1), (1,2), (2,0), (2,1), (3,0), 
-        (5,8), (6,7), (6,8), (7,6), (7,8), 
+        (0,0), (0,1), (0,2), (0,3), (1,0),
+        (1,1), (1,2), (2,0), (2,1), (3,0),
+        (5,8), (6,7), (6,8), (7,6), (7,8),
         (7,8), (8,5), (8,6), (8,7), (8,8)
     ]
 
@@ -51,32 +51,15 @@ class Board(object):
             [ 0, 0, 0, 0, 0, 0,-1,-1,-1],
             [ 0, 0, 0, 0, 0,-1,-1,-1,-1]
         ]
-        self.nxt_player = self.PR_1
+        self.next_player = self.PR_1
         self.fst_mv_taken = False
-        self.mv_count = 0
-        self.latest_mv = None
-
-    def next_player(self):
-        """Returns next player as an integer"""
-        return self.nxt_player
-
-    def move_count(self):
-        """Returns count of moves as an integer"""
-        return self.mv_count
-
-    def take_first_move(self):
-        """Takes first move as second player move
-           returns:
-               the latest move which is a couple of integer values
-        """
-        self.fst_mv_taken = True
-        return self.latest_mv
+        self.move_count = 0
 
     def print_line(self, ridx, indent):
         """Prints a line of the board
            arguments:
                ridx   -- integer value of the index of the row (zero-based)
-               indent -- integer value of the indent to be printed before the 
+               indent -- integer value of the indent to be printed before the
                          row
         """
         print(' '*indent, end='')
@@ -113,13 +96,22 @@ class Board(object):
         self.print_line(8, 8)
         print('         \\ / \\ / \\ / \\ / \\ /')
 
+    def take_first_move(self):
+        """Retrieves and returns coordinates of the first move"""
+        for x in range(0, self.SIDE):
+            for y in range(0, self.SIDE):
+                v = self.board[x][y]
+                if v != 0 and v != -1:
+                    return (x,y)
+        return (None,None)
+
     def is_playable(self, r, c):
         """Assert the existance and availability of the position
            arguments:
                r -- row to be considered (zero-based)
                c -- number of playable column (one-based)
            returns:
-               a tuple of a boolean and two integer values indicating if the 
+               a tuple of a boolean and two integer values indicating if the
                cell can be played and the real coordinates of the cell in the
                matrix
         """
@@ -138,34 +130,52 @@ class Board(object):
 
     def update_next_player(self):
         """Updates next player value swapping from 1-to-2 and 2-to-1"""
-        if self.nxt_player == self.PR_2:
-            self.nxt_player = self.PR_1
+        if self.next_player == self.PR_2:
+            self.next_player = self.PR_1
         else:
-            self.nxt_player = self.PR_2
+            self.next_player = self.PR_2
 
     def do(self, x, y):
-        """Executes a real move and updates board-related variables
+        """Executes a move and updates board-related variables
            arguments:
                x -- index of the row in the matrix (zero-based)
                y -- index of the column in the matrix (zero-based)
         """
-        self.board[x][y] = self.nxt_player
+        if self.move_count == 1 and self.board[x][y] != 0:
+            self.fst_mv_taken = True
+        self.board[x][y] = self.next_player
         self.update_next_player()
-        self.mv_count += 1
-        self.latest_mv = (x,y)
+        self.move_count += 1
 
-    def end_game(self):
-        """Detects if the board is in an end game state"""
+    def undo(self, x, y):
+        """Reverts a move and updates board-related variables
+           arguments:
+               x -- index of the row in the matrix (zero-based)
+               y -- index of the column in the matrix (zero-based)
+        """
+        if self.move_count == 2 and self.fst_mv_taken:
+            self.board[x][y] = self.next_player
+            self.fst_mv_taken = False
+        else:
+            self.board[x][y] = 0
+        self.update_next_player()
+        self.move_count -= 1
+
+    def end_game(self, x, y):
+        """Detects if the board is in an end game state
+           arguments:
+               x -- index of the row in the matrix (zero-based)
+               y -- index of the column in the matrix (zero-based)
+        """
         # -- initialise variables
-        (x,y) = self.latest_mv
         player = self.board[x][y]
         mx_seq = 0
         seq = 1
         k = 1
         # -- check draw
-        if self.fst_mv_taken and self.mv_count == 62:
+        if self.fst_mv_taken and self.move_count == 62:
             return self.EG_DRAW
-        elif not self.fst_mv_taken and self.mv_count == 61:
+        elif not self.fst_mv_taken and self.move_count == 61:
             return self.EG_DRAW
         # -- check for a winner or a loser
         # ---- check line
@@ -236,25 +246,10 @@ class Board(object):
                x -- index of the row in the matrix (zero-based)
                y -- index of the column in the matrix (zero-based)
         """
-        return (self.board[x][y]==0)
-
-    def ai_do(self, x, y):
-        """Simulates a move for the AI. Can be reverted using ai_undo.
-           arguments:
-               x -- index of the row in the matrix (zero-based)
-               y -- index of the column in the matrix (zero-based)
-        """
-        self.board[x][y] = self.nxt_player
-        self.update_next_player()
-
-    def ai_undo(self, x, y):
-        """Reset a move simulated for the AI. Can be reverted using ai_do.
-           arguments:
-               x -- index of the row in the matrix (zero-based)
-               y -- index of the column in the matrix (zero-based)
-        """
-        self.board[x][y] = 0
-        self.update_next_player()
+        v = self.board[x][y]
+        if v == 0:
+            return True
+        return (self.move_count == 1 and v != -1 and not self.fst_mv_taken)
 
     def ai_board_lines(self):
         """Convert the board matrix to a list of strings representing 

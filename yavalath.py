@@ -34,12 +34,12 @@ class Yavalath(object):
         while eg == Board.EG_NEXT:
             # -- select player and ask for a move
             x = y = None
-            mvc = self.board.move_count()
+            mvc = self.board.move_count
             if verbose:
                 print('---------------------------------------------')
             else:
                 print('turn %d' % mvc)
-            if self.board.next_player() == Board.PR_1:
+            if self.board.next_player == Board.PR_1:
                 if verbose:
                     print(' TURN: {} - PLAYER: {}'.format(mvc, self.p1.name))
                     print('---------------------------------------------')
@@ -54,7 +54,7 @@ class Yavalath(object):
             # -- execute move
             self.board.do(x,y)
             # -- check end game clause
-            eg = self.board.end_game()
+            eg = self.board.end_game(x,y)
         # -- print game result
         if verbose:
             print('---------------------------------------------')
@@ -63,12 +63,12 @@ class Yavalath(object):
             if verbose:
                 print('This is a draw!')
         elif eg == Board.EG_WIN:
-            if self.board.next_player() == Board.PR_1:
+            if self.board.next_player == Board.PR_1:
                 winner = self.p2.name
             else:
                 winner = self.p1.name
         else:
-            if self.board.next_player() == Board.PR_1:
+            if self.board.next_player == Board.PR_1:
                 winner = self.p1.name
             else:
                 winner = self.p2.name

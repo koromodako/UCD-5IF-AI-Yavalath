@@ -60,7 +60,7 @@ class AI(object):
         self.static_evals.append(0)
         self.move_generator.reset(self.level)
         (i, j, score) = self.negamax(board,
-            board.next_player(), self.level-1, -INFINITY, INFINITY)
+            board.next_player, self.level-1, -INFINITY, INFINITY)
         return (i, j)
 
     def negamax(self, board, player, h, a, b):
@@ -87,10 +87,10 @@ class AI(object):
                     # -- debug
                     #print('%sconsidering(%d,%d)' % (h*'\t', i, j))
                     # -- debug
-                    board.ai_do(mv[0], mv[1])
+                    board.do(mv[0], mv[1])
                     (ri, rj, rscore) = self.negamax(board,
-                        board.next_player(), h-1, -b, -a)
-                    board.ai_undo(mv[0], mv[1])
+                        board.next_player, h-1, -b, -a)
+                    board.undo(mv[0], mv[1])
                     score = - rscore
                     if score >= b:
                         self.move_generator.incr_pruning(mv, h)

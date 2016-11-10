@@ -33,7 +33,7 @@ class Player(object):
             if len(mv) == 1 and mv == 'Q':
                 print('See you soon !')
                 exit(1)
-            if board.move_count() == 1:
+            if board.move_count == 1:
                 if len(mv) == 1 and mv == 'X':
                     (x,y) = board.take_first_move()
                     break
