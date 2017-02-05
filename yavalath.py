@@ -25,7 +25,7 @@ class Yavalath(object):
         self.p1 = p1
         self.p2 = p2
 
-    def run(self, verbose=True):
+    def run(self, verbose=True, detailed=False):
         """Starts game's main loop"""
         # -- reset game board
         self.board.reset()
@@ -37,22 +37,22 @@ class Yavalath(object):
             mvc = self.board.move_count
             if verbose:
                 print('---------------------------------------------')
-            else:
-                print('turn %d' % mvc)
             if self.board.next_player == Board.PR_1:
                 if verbose:
                     print(' TURN: {} - PLAYER: {}'.format(mvc, self.p1.name))
                     print('---------------------------------------------')
-                    self.board.print()
+                    self.board.print(detailed)
                 (x,y) = self.p1.next_move(self.board)
             else:
                 if verbose:
                     print(' TURN: {} - PLAYER: {}'.format(mvc, self.p2.name))
                     print('---------------------------------------------')
-                    self.board.print()
+                    self.board.print(detailed)
                 (x,y) = self.p2.next_move(self.board)
             # -- execute move
             self.board.do(x,y)
+            if verbose:
+                self.board.print_pos(x,y)
             # -- check end game clause
             eg = self.board.end_game(x,y)
         # -- print game result

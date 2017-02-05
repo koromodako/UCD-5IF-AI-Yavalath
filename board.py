@@ -8,8 +8,9 @@
 #   Yavalath board with associated game state data.
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #==============================================================================
-#  IMPORTS
+#  GLOBALS
 #==============================================================================
+OFFSET = [4,3,2,1,0,0,0,0,0]
 #==============================================================================
 #  FUNCTIONS/CLASSES
 #==============================================================================
@@ -55,13 +56,15 @@ class Board(object):
         self.fst_mv_taken = False
         self.move_count = 0
 
-    def print_line(self, ridx, indent):
+    def print_line(self, ridx, indent, detailed=False):
         """Prints a line of the board
            arguments:
                ridx   -- integer value of the index of the row (zero-based)
                indent -- integer value of the indent to be printed before the
                          row
         """
+        if detailed:
+            print('%c: ' % chr(ridx+65), end='')
         print(' '*indent, end='')
         for i in range(0,self.SIDE):
             v=self.board[ridx][i]
@@ -72,29 +75,55 @@ class Board(object):
                 elif v==self.PR_2:
                     c='O'
                 print('| {} '.format(c), end='')
-        print('|')
+        if detailed and ridx < 4:
+            print('| %d' % (ridx+6))
+        else:
+            print('|')
 
-    def print(self):
+    def print_up(self, count, indent, detailed=False):
+        s = ''
+        if detailed:
+            s += ' ' * 3
+        s += ' ' * indent
+        s += ' / \\' * count
+        print(s)
+
+    def print_down(self, count, indent, detailed=False):
+        s = ''
+        if detailed:
+            s += ' ' * 3
+        s += ' ' * indent
+        s += ' \\ /' * count
+        print(s)
+
+    def print(self, detailed=False):
         """Prints the board"""
-        print('         / \\ / \\ / \\ / \\ / \\')
-        self.print_line(0, 8)
-        print('       / \\ / \\ / \\ / \\ / \\ / \\')
-        self.print_line(1, 6)
-        print('     / \\ / \\ / \\ / \\ / \\ / \\ / \\')
-        self.print_line(2, 4)
-        print('   / \\ / \\ / \\ / \\ / \\ / \\ / \\ / \\')
-        self.print_line(3, 2)
-        print(' / \\ / \\ / \\ / \\ / \\ / \\ / \\ / \\ / \\')
-        self.print_line(4, 0)
-        print(' \\ / \\ / \\ / \\ / \\ / \\ / \\ / \\ / \\ /')
-        self.print_line(5, 2)
-        print('   \\ / \\ / \\ / \\ / \\ / \\ / \\ / \\ /')
-        self.print_line(6, 4)
-        print('     \\ / \\ / \\ / \\ / \\ / \\ / \\ /')
-        self.print_line(7, 6)
-        print('       \\ / \\ / \\ / \\ / \\ / \\ /')
-        self.print_line(8, 8)
-        print('         \\ / \\ / \\ / \\ / \\ /')
+        if detailed:
+            print('               1   2   3   4   5')
+        self.print_up(  5, 8, detailed)
+        self.print_line(0, 8, detailed)
+        self.print_up(  6, 6, detailed)
+        self.print_line(1, 6, detailed)
+        self.print_up(  7, 4, detailed)
+        self.print_line(2, 4, detailed)
+        self.print_up(  8, 2, detailed)
+        self.print_line(3, 2, detailed)
+        self.print_up(  9, 0, detailed)
+        self.print_line(4, 0, detailed)
+        self.print_down(9, 0, detailed)
+        self.print_line(5, 2, detailed)
+        self.print_down(8, 2, detailed)
+        self.print_line(6, 4, detailed)
+        self.print_down(7, 4, detailed)
+        self.print_line(7, 6, detailed)
+        self.print_down(6, 6, detailed)
+        self.print_line(8, 8, detailed)
+        self.print_down(5, 8, detailed)
+
+    def print_pos(self,x,y):
+        c = chr(x+65)
+        d = y + 1 - OFFSET[x] 
+        print('Latest move: %c%d' % (c,d))
 
     def take_first_move(self):
         """Retrieves and returns coordinates of the first move"""
