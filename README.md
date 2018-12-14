@@ -2,10 +2,10 @@
 
 Yavalath game created for the second assignement of COMP30260 at University College Dublin.
 
-## Play
+## Play
 
 Execute the following command: `./yavalath`
 
-## Requirements
+## Requirements
 
  + Python 3.5
