@@ -2,7 +2,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # file:    player.py
 # date:    2016-10-30
-# author:  paul dautry (16201434)
+# author:  koromodako (16201434)
 # purpose:
 #   This file contains the implementation of the Player class which represent 
 #   a human player and contain all the logic needed to process user input.

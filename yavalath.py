@@ -2,7 +2,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # file:    yavalath.py
 # date:    2016-10-30
-# author:  paul dautry (16201434)
+# author:  koromodako (16201434)
 # purpose:
 #   This file contains the implementation of the Yavalath class which
 #   contains Yavalath's game logic and game's main loop.

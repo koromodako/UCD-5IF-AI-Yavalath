@@ -2,7 +2,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # file:    move_generator.py
 # date:    2016-11-09
-# author:  paul dautry (16201434)
+# author:  koromodako (16201434)
 # purpose:
 #   This file contains the implementation of MoveGenerator class which
 #   generates moves accordingly to the selected mode.
